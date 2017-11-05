@@ -1,0 +1,19 @@
+katello:
+    server: https://your-katello-server
+    username: your-user
+    password: your-password
+    api_url: /katello/api/v2/
+    ssl_verify: False
+
+data_files:
+    errata_files: ./data/errata.latest.xml
+    oval_files: ./data/com.redhat.rhsa-all.xml
+
+redis:
+    server: your-redis-server
+    port: 6379
+
+repositories:
+    katello-repository-label:
+        pulp_id: id
+        os_release: 7
