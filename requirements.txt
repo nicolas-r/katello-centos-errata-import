@@ -1,0 +1,5 @@
+lxml
+PyYAML
+pyaml
+redis
+requests

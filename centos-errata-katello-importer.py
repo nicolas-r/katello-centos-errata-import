@@ -15,7 +15,7 @@ try:
 except ImportError:
     from yaml import Loader
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/modules')
 from rhnerrata.rhnerrata import rhnErrata
 from katello.katello import Katello
 
@@ -173,7 +173,7 @@ if __name__ == '__main__':
         if pkg_found is True:
             # logger.info('%s will be created' % (errata.id))
             # Create the CSV files for package list
-            packages_file = "/tmp/v3/" + errata.id + ".packages.csv"
+            packages_file = "/tmp/" + errata.id + ".packages.csv"
             if sys.version_info >= (3, 0, 0):
                 file = open(packages_file, "w", newline='')
             else:
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             finally:
                 file.close()
             # Create the CSV files for references list
-            references_file = "/tmp/v3/" + errata.id + ".references.csv"
+            references_file = "/tmp/" + errata.id + ".references.csv"
             if sys.version_info >= (3, 0, 0):
                 file = open(references_file, "w", newline='')
             else:
@@ -199,10 +199,6 @@ if __name__ == '__main__':
 
             pulp_cmd = []
             pulp_cmd.append('pulp-admin')
-            #pulp_cmd.append('-u')
-            #pulp_cmd.append(conf_data['pulp']['username'])
-            #pulp_cmd.append('-p')
-            #pulp_cmd.append(conf_data['pulp']['password'])
             pulp_cmd.append('rpm')
             pulp_cmd.append('repo')
             pulp_cmd.append('uploads')
@@ -222,12 +218,13 @@ if __name__ == '__main__':
             pulp_cmd.append('--repo-id=' + all_repositories[errata_packages_details['repository_release']][errata_packages_details['repository_label']]['pulp'])
             pulp_cmd.append('--erratum-id=' + errata.get_id())
 
-            print(pulp_cmd)
-            # subprocess.call(pulp_cmd)
-            #sys.exit(0)
-        #             # Upload the errata
-        #     # else:
-        #     #     print('%s ignored' % (errata_id))
+            #print(pulp_cmd)
+            subprocess.call(pulp_cmd)
+            # Clean temporary files
+            clean_files = [packages_file, references_file]
+            for f in clean_files:
+                if os.path.exists(f):
+                    os.remove(f)
 
     for repo_release in all_repositories:
         for repo in all_repositories[repo_release]:

@@ -1,6 +1,8 @@
 # katello-centos-errata-import
 Imports CentOS (from http://cefs.steve-meier.de/) errata into Katello.
 
+This script is a python rewrite of a perl script made by [brdude](https://github.com/brdude/pulp_centos_errata_import)
+
 This script imports CentOS Errata into Katello
 It relies on preformatted information since parsing email
 is the road to madness...
@@ -11,7 +13,7 @@ To run this script on CentOS you need:
  - redis server
  - Some python modules
 
-This script is a python rewrite of a perl script made by [brdude](https://github.com/brdude/pulp_centos_errata_import)
+It has been tested on CentOS 7 with the default python version and with python34 from EPEL. I'm using [pew](https://github.com/berdario/pew) to test it inside a python virtual environment
 
 # Warning
 

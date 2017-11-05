@@ -30,7 +30,7 @@ except ImportError:
     print("Please install the redis module.")
     sys.exit(-1)
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/modules')
 from rhnerrata.rhnerrata import rhnErrata
 
 
