@@ -2,18 +2,24 @@
 
 import re
 
+default_errata_types = {
+    'Security Advisory': 'security',
+    'Bug Fix Advisory': 'bugfix',
+    'Product Enhancement Advisory': 'enhancement',
+}
+
 
 class rhnErrata(object):
 
     """docstring for Errata"""
     def __init__(self, errata_id):
-        self.id = errata_id
+        self.errata_id = errata_id
         self.release = None
         self.severity = None
         self.description = None
         self.synopsis = None
         self.issue_date = None
-        self.type = None
+        self.errata_type = None
         self.email = None
         self.os_releases = []
         self.all_packages = []
@@ -26,15 +32,15 @@ class rhnErrata(object):
         self.description = data['description']
         self.synopsis = data['synopsis']
         self.issue_date = data['issue_date']
-        self.type = data['type']
+        self.set_errata_type(data['errata_type'])
         self.email = data['email']
         self.os_releases = data['os_releases']
         self.all_packages = data['all_packages']
         self.references = data['references']
         self.packages_by_os_release = data['packages_by_os_release']
 
-    def get_id(self):
-        return self.id
+    def get_errata_id(self):
+        return self.errata_id
 
     def set_release(self, errata_release):
         self.release = errata_release
@@ -66,11 +72,14 @@ class rhnErrata(object):
     def get_issue_date(self):
         return self.issue_date
 
-    def set_type(self, errata_type):
-        self.type = errata_type
+    def set_errata_type(self, errata_type):
+        if errata_type in default_errata_types:
+            self.errata_type = default_errata_types[errata_type]
+        else:
+            self.errata_type = errata_type
 
-    def get_type(self):
-        return self.type
+    def get_errata_type(self):
+        return self.errata_type
 
     def set_email(self, errata_email):
         self.email = errata_email
@@ -95,9 +104,10 @@ class rhnErrata(object):
     def add_package(self, errata_package):
         self.all_packages.append(errata_package)
         for os_release in self.os_releases:
-            if not re.match(r'.+\.src\.rpm', errata_package):
-                if re.match(r'.+\.(el|EL|rhel|RHEL)' + str(os_release) + r'.+', errata_package):
-                    self.packages_by_os_release[os_release]['packages'].append(errata_package)
+            if re.match(r'.+\.src\.rpm', errata_package):
+                continue
+            if re.match(r'.+\.(el|EL|rhel|RHEL)' + str(os_release) + r'.+', errata_package):
+                self.packages_by_os_release[os_release]['packages'].append(errata_package)
 
     def get_packages_for_os_release(self, os_release):
         if os_release in self.os_releases:

@@ -124,7 +124,7 @@ if __name__ == '__main__':
                 local_errata.set_severity(errata.attrib['severity'])
             else:
                 local_errata.set_severity('Low')
-            local_errata.set_type(errata.attrib['type'])
+            local_errata.set_errata_type(errata.attrib['type'])
             for ref in errata.attrib['references'].split():
                 local_errata.add_reference(ref)
 

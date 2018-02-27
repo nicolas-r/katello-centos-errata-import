@@ -139,7 +139,7 @@ if __name__ == '__main__':
     # are present in the repository
 
     for errata in all_erratas:
-        logger.debug("Processing errata %s" % errata.id)
+        logger.debug("Processing errata %s" % errata.errata_id)
 
         pkg_found = False
         errata_packages_details = {'packages': []}
@@ -148,14 +148,14 @@ if __name__ == '__main__':
             logger.debug("Working on OS release %d" % repository_release)
             # Get errata's packages matching the os release of the current repository
             errata_packages = errata.get_packages_for_os_release(repository_release)
-            logger.debug("Packages list for errata %s for OS release %d: %s" % (errata.id, repository_release, errata_packages))
+            logger.debug("Packages list for errata %s for OS release %d: %s" % (errata.errata_id, repository_release, errata_packages))
             if errata_packages is not None:
                 # Loop over all repositories for a given os release
                 for repository_label in all_repositories[repository_release]:
                     logger.debug("Working on repository %s" % repository_label)
 
-                    if errata.id in all_repositories[repository_release][repository_label]['erratas']:
-                        logger.debug("Skipping errata %s (already present)" % errata.id)
+                    if errata.errata_id in all_repositories[repository_release][repository_label]['erratas']:
+                        logger.debug("Skipping errata %s (already present)" % errata.errata_id)
                         break
 
                     for errataPkg in errata_packages:
@@ -173,7 +173,7 @@ if __name__ == '__main__':
         if pkg_found is True:
             # logger.info('%s will be created' % (errata.id))
             # Create the CSV files for package list
-            packages_file = "/tmp/" + errata.id + ".packages.csv"
+            packages_file = "/tmp/" + errata.errata_id + ".packages.csv"
             if sys.version_info >= (3, 0, 0):
                 file = open(packages_file, "w", newline='')
             else:
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             finally:
                 file.close()
             # Create the CSV files for references list
-            references_file = "/tmp/" + errata.id + ".references.csv"
+            references_file = "/tmp/" + errata.errata_id + ".references.csv"
             if sys.version_info >= (3, 0, 0):
                 file = open(references_file, "w", newline='')
             else:
@@ -193,7 +193,7 @@ if __name__ == '__main__':
             try:
                 writer = csv.writer(file)
                 for ref in errata.get_references():
-                    writer.writerow([ref, errata.get_type(), errata.id, errata.get_synopsis()])
+                    writer.writerow([ref, errata.get_errata_type(), errata.errata_id, errata.get_synopsis()])
             finally:
                 file.close()
 
@@ -207,7 +207,7 @@ if __name__ == '__main__':
             pulp_cmd.append('--description=' + errata.get_description())
             pulp_cmd.append('--version=' + str(errata.get_release()))
             pulp_cmd.append('--release=el' + str(errata_packages_details['repository_release']))
-            pulp_cmd.append('--type=' + errata.get_type())
+            pulp_cmd.append('--type=' + errata.get_errata_type())
             pulp_cmd.append('--severity=' + errata.get_severity())
             pulp_cmd.append('--status=final')
             pulp_cmd.append('--updated=' + errata.get_issue_date())
@@ -216,10 +216,11 @@ if __name__ == '__main__':
             pulp_cmd.append('--pkglist-csv=' + packages_file)
             pulp_cmd.append('--from=' + errata.get_email())
             pulp_cmd.append('--repo-id=' + all_repositories[errata_packages_details['repository_release']][errata_packages_details['repository_label']]['pulp'])
-            pulp_cmd.append('--erratum-id=' + errata.get_id())
+            pulp_cmd.append('--erratum-id=' + errata.get_errata_id())
 
-            #print(pulp_cmd)
+            # print(pulp_cmd)
             subprocess.call(pulp_cmd)
+
             # Clean temporary files
             clean_files = [packages_file, references_file]
             for f in clean_files:
