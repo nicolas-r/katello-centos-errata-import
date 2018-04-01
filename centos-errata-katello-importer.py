@@ -79,14 +79,14 @@ if __name__ == '__main__':
                 repo_found = True
                 break
         if repo_found is False:
-            print("%s doesn't exits in Katello/Satellite" % conf_repo)
+            logger.info("%s doesn't exits in Katello/Satellite" % conf_repo)
             sys.exit(1)
 
     logger.info('Get repositories information from Katello/Satellite and configuration file...')
     # Get repositories information from Katello/Satellite and configuration file
     for repo in katello_repositories['results']:
         if repo['label'] not in conf_data['repositories']:
-            print("skipped")
+            logger.info("Repository %s skipped, not in the configuration file" % repo['label'])
             continue
         if conf_data['repositories'][repo['label']]['os_release'] not in all_repositories:
             all_repositories[conf_data['repositories'][repo['label']]['os_release']] = {}
@@ -109,12 +109,12 @@ if __name__ == '__main__':
             all_repositories[repo_release][repo]['erratas'] = []
 
             # Get all erratas
-            erratas = katello.get_all_erratas(all_repositories[repo_release][repo]['id'])
+            erratas = katello.get_repository_erratas(all_repositories[repo_release][repo]['id'])
             for errata in erratas['results']:
                 all_repositories[repo_release][repo]['erratas'].append(errata['errata_id'])
 
             # Get all packages
-            rpms = katello.get_all_packages(all_repositories[repo_release][repo]['id'])
+            rpms = katello.get_repository_packages(all_repositories[repo_release][repo]['id'])
             for rpm in rpms['results']:
                 all_repositories[repo_release][repo]['packages'][rpm['filename']] = {
                     'version': rpm['version'],
@@ -129,6 +129,7 @@ if __name__ == '__main__':
                 }
                 all_repositories[repo_release][repo]['packages_set'].append(rpm['filename'])
     # pp.pprint(all_repositories)
+    # sys.exit(0)
 
     #########################
     # 4. Create the  errata #
@@ -226,8 +227,10 @@ if __name__ == '__main__':
             for f in clean_files:
                 if os.path.exists(f):
                     os.remove(f)
-
+        print()
     for repo_release in all_repositories:
         for repo in all_repositories[repo_release]:
-            print("%s %s" % (repo, all_repositories[repo_release][repo]['nb_erratas']))
-    sys.exit(0)
+            logger.info("%s errata(s) added to %s" % (all_repositories[repo_release][repo]['nb_erratas'], repo))
+            logger.info("Start the synchonization for %s" % repo)
+            res = katello.start_repo_sync(all_repositories[repo_release][repo]['id'])
+            logger.info("Task id: %s, started at: %s, state: %s" % (res['id'], res['started_at'], res['state']))

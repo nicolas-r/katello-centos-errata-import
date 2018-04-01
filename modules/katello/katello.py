@@ -59,14 +59,18 @@ class Katello(object):
         )
         return r.json()
 
-    def _post_json(self, location, authData, data):
+    def _post_json(self, location, data):
         """
         Performs a POST and passes the data to the URL location
         """
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        if data is not None:
+            _data = json.dump(data)
+        else:
+            _data = None
         result = requests.post(
-            location,
-            data=json.dump(data),
+            self.katello_api + location,
+            data=_data,
             auth=(self.katello_user, self.katello_password),
             verify=self.ssl_verify,
             headers=self.post_headers)
@@ -75,17 +79,24 @@ class Katello(object):
     def get_repositories(self):
         return(self._get_json('repositories', None))
 
-    def get_repository_details(self, repositoryID):
-        return(self._get_json('repositories/' + str(repositoryID), None))
+    def get_repository_details(self, repository_id):
+        return(self._get_json('repositories/' + str(repository_id), None))
 
-    def get_all_erratas(self, repositoryID):
+    def get_repository_erratas(self, repository_id):
         data = {
-            'repository_id': repositoryID,
+            'repository_id': repository_id,
         }
         return(self._get_json('errata', data))
 
-    def get_all_packages(self, repositoryID):
-        return(self._get_json('repositories/' + str(repositoryID) + '/packages', None))
+    def get_repository_packages(self, repository_id):
+        data = {
+            'repository_id': repository_id,
+        }
+        # return(self._get_json('repositories/' + str(repository_id) + '/packages', None))
+        return(self._get_json('packages', data))
+
+    def start_repo_sync(self, repository_id):
+        return(self._post_json('repositories/' + str(repository_id) + '/sync', None))
 
 
 if __name__ == '__main__':
