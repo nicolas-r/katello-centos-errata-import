@@ -23,9 +23,6 @@ It has been tested on CentOS 7 with the default python version and with python34
 
 # Prerequisites
 
-## Katello settings
-Go to "Administer" > "Settings" > "Katello" and set "force_post_sync_action" to true. (Katello 3.0 and up)
-
 ## Authentication
 pulp-admin must authenticate to pulp. This authentication information can be provided to pulp-admin in two ways.
 

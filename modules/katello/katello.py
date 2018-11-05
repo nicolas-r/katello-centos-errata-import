@@ -65,7 +65,7 @@ class Katello(object):
         """
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         if data is not None:
-            _data = json.dump(data)
+            _data = json.dumps(data)
         else:
             _data = None
         result = requests.post(
@@ -96,7 +96,10 @@ class Katello(object):
         return(self._get_json('packages', data))
 
     def start_repo_sync(self, repository_id):
-        return(self._post_json('repositories/' + str(repository_id) + '/sync', None))
+        data = {
+            'skip_metadata_check': 'true',
+        }
+        return(self._post_json('repositories/' + str(repository_id) + '/sync', data))
 
 
 if __name__ == '__main__':
