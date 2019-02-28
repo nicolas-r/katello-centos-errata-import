@@ -53,7 +53,7 @@ class Katello(object):
 
         r = requests.get(
             self.katello_api + location,
-            data=data,
+            params=data,
             auth=(self.katello_user, self.katello_password),
             verify=self.ssl_verify,
         )
