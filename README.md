@@ -23,6 +23,9 @@ It has been tested on CentOS 7 with the default python version and with python34
 
 # Prerequisites
 
+## Katello settings
+The option "Mirror on Sync" has to be set to "No" for the CentOS repositories. if set to "Yes", the repositories will be mirror from upstream and all erratas will be lost, as upstream doesn't publish erratas
+
 ## Authentication
 pulp-admin must authenticate to pulp. This authentication information can be provided to pulp-admin in two ways.
 
