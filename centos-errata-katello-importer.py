@@ -16,8 +16,8 @@ except ImportError:
     from yaml import Loader
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/modules')
-from rhnerrata.rhnerrata import rhnErrata
-from katello.katello import Katello
+from katelloerrata.katelloerrata import katelloErrata
+from katelloerrata.katello import Katello
 
 # Define some variables
 all_erratas = []
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     redis_client = redis.StrictRedis(host=conf_data['redis']['server'], port=conf_data['redis']['port'], db=0)
     for errata_id in redis_client.scan_iter(match='CE*'):
-        local_errata = rhnErrata(errata_id.decode('utf-8'))
+        local_errata = katelloErrata(errata_id.decode('utf-8'))
         errata_redis_data = json.loads(redis_client.get(errata_id).decode('utf-8'))
         local_errata.bulk_create(errata_redis_data)
         all_erratas.append(local_errata)
