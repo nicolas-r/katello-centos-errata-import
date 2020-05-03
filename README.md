@@ -81,7 +81,7 @@ For the reposotiries part, this is a little tricky.
   2. Run the script download-data.sh to download the last datafiles from Steve Meier and Red Hat sites
   3. Run the script centos-errata-redis-loader.py to store errata data into Redis
   4. Run the script centos-errata-katello-importer.py to start the creation of the errata into Katello
-  5. Sync repositories again so that errata is published. (The errata will not show up on the Katello/Foreman interface until this step is completed.)
+  5. Wait for the repositories synchronizations triggered by the script to finish and the erratas will appear
 
 # Contributing
 
