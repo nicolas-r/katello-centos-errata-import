@@ -39,21 +39,22 @@ class Katello(object):
         self.ssl_verify = conf_data['katello']['ssl_verify']
         self.post_headers = {'Content-Type': 'application/json'}
 
-    def _get_json(self, location, data):
+    def _get_json(self, location, data, params):
         """
         Performs a GET using the passed URL location
         """
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-        if data is None:
-            data = {
+        if params is None:
+            params = {
                 'per_page': 99999,
             }
         else:
-            data['per_page'] = 99999
+            params['per_page'] = 99999
 
         r = requests.get(
             self.katello_api + location,
             data=data,
+            params=params,
             auth=(self.katello_user, self.katello_password),
             verify=self.ssl_verify,
         )
@@ -77,23 +78,23 @@ class Katello(object):
         return result.json()
 
     def get_repositories(self):
-        return(self._get_json('repositories', None))
+        return(self._get_json('repositories', None, None))
 
     def get_repository_details(self, repository_id):
-        return(self._get_json('repositories/' + str(repository_id), None))
+        return(self._get_json('repositories/' + str(repository_id), None, None))
 
     def get_repository_erratas(self, repository_id):
         data = {
             'repository_id': repository_id,
         }
-        return(self._get_json('errata', data))
+        return(self._get_json('errata', data, None))
 
     def get_repository_packages(self, repository_id):
         data = {
             'repository_id': repository_id,
         }
         # return(self._get_json('repositories/' + str(repository_id) + '/packages', None))
-        return(self._get_json('packages', data))
+        return(self._get_json('packages', data, None))
 
     def start_repo_sync(self, repository_id):
         data = {

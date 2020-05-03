@@ -9,7 +9,7 @@ default_errata_types = {
 }
 
 
-class rhnErrata(object):
+class katelloErrata(object):
 
     """docstring for Errata"""
     def __init__(self, errata_id):

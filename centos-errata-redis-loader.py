@@ -31,7 +31,7 @@ except ImportError:
     sys.exit(-1)
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/modules')
-from rhnerrata.rhnerrata import rhnErrata
+from katelloerrata.katelloerrata import katelloErrata
 
 
 if __name__ == '__main__':
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                 continue
 
             # Get errata information
-            local_errata = rhnErrata(errata_id)
+            local_errata = katelloErrata(errata_id)
             local_errata.set_synopsis(errata.attrib['synopsis'].replace(',', ';'))
             local_errata.set_issue_date(errata.attrib['issue_date'])
             local_errata.set_release(errata.attrib['release'])
